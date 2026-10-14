@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Filter Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --bg-color: #121212;
+            --primary-accent: #bb86fc;
+            --secondary-accent: #03dac6;
+            --surface-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #2c2c2c;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --scrollbar-thumb: #333;
+            --scrollbar-track: #1e1e1e;
+        }
+        
+        html[data-theme='light'] {
+            --bg-color: #f4f4f9;
+            --primary-accent: #6200ee;
+            --secondary-accent: #018786;
+            --surface-color: #ffffff;
+            --text-color: #121212;
+            --text-muted: #555;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --scrollbar-thumb: #ccc;
+            --scrollbar-track: #f1f1f1;
+        }
+        
+        * {
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        }
+        
+        *::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        *::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+        
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+            border-radius: 10px;
+            border: 2px solid var(--scrollbar-track);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 1.5rem;
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 1.5rem;
+            max-width: 1600px;
+            margin: auto;
+            height: calc(100vh - 3rem);
+        }
+        
+        header {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--primary-accent);
+            font-size: 1.75rem;
+            margin: 0;
+        }
+        
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 26px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked+.slider {
+            background-color: var(--primary-accent);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+        
+        .controls-sidebar {
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+        
+        .control-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .control-group label span {
+            color: var(--text-muted);
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 5px;
+            background: var(--border-color);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-accent);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary-accent);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        input[type="range"]:hover::-webkit-slider-thumb {
+            background: var(--secondary-accent);
+        }
+        
+        .drop-shadow-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .color-input-wrapper {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 8px;
+            background-color: transparent;
+        }
+        
+        .presets-gallery {
+            margin-top: 1.5rem;
+        }
+        
+        h3 {
+            font-size: 1.1rem;
+            color: var(--primary-accent);
+            margin-bottom: 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+        
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 1rem;
+        }
+        
+        .preset {
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .preset img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s, transform 0.2s;
+        }
+        
+        .preset:hover img {
+            transform: scale(1.05);
+            border-color: var(--secondary-accent);
+        }
+        
+        .preset span {
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+        }
+        
+        .image-workspace {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            overflow: hidden;
+        }
+        
+        .image-preview-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        #image-comparison-slider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background-color: var(--secondary-accent);
+            cursor: ew-resize;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        #image-comparison-slider::before {
+            content: '◀▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--secondary-accent);
+            color: var(--bg-color);
+            padding: 8px 4px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        #original-image-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        #original-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: auto;
+            max-width: none;
+            max-height: none;
+        }
+        
+        #filtered-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: filter 0.1s ease-out;
+        }
+        
+        .output-bar {
+            background-color: var(--bg-color);
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        #css-output {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--secondary-accent);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        
+        button,
+        .upload-label {
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .upload-label {
+            background-color: var(--primary-accent);
+            color: white;
+        }
+        
+        .upload-label:hover {
+            opacity: 0.9;
+        }
+        
+        #copy-btn {
+            background-color: var(--secondary-accent);
+            color: var(--bg-color);
+        }
+        
+        #copy-btn:hover {
+            opacity: 0.9;
+        }
+        
+        #reset-btn,
+        #download-btn {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        #reset-btn:hover,
+        #download-btn:hover {
+            background-color: var(--border-color);
+        }
+        
+        #image-upload {
+            display: none;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 320px 1fr;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+            }
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr;
+                height: auto;
+            }
+            .controls-sidebar {
+                max-height: 40vh;
+            }
+            .image-workspace {
+                min-height: 50vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <header>
+            <h1>Filter Studio</h1>
+            <div class="theme-switcher">
+                <span>☀️</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>🌙</span>
+            </div>
+        </header>
+
+        <aside class="controls-sidebar">
+            <div class="action-buttons" style="margin-bottom: 1.5rem;">
+                <label for="image-upload" class="upload-label">Upload Image</label>
+                <input type="file" id="image-upload" accept="image/*">
+                <button id="download-btn">Download</button>
+            </div>
+
+            <div class="control-group">
+                <label for="blur">Blur: <span id="blur-value">0px</span></label>
+                <input type="range" id="blur" min="0" max="20" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label for="brightness">Brightness: <span id="brightness-value">100%</span></label>
+                <input type="range" id="brightness" min="0" max="200" value="100" step="1">
+            </div>
+            <div class="control-group">
+                <label for="contrast">Contrast: <span id="contrast-value">100%</span></label>
+                <input type="range" id="contrast" min="0" max="200" value="100" step="1">
+            </div>
+            <div class="control-group">
+                <label for="grayscale">Grayscale: <span id="grayscale-value">0%</span></label>
+                <input type="range" id="grayscale" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label for="invert">Invert: <span id="invert-value">0%</span></label>
+                <input type="range" id="invert" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="control-group">
+                <label for="saturate">Saturate: <span id="saturate-value">100%</span></label>
+                <input type="range" id="saturate" min="0" max="300" value="100" step="1">
+            </div>
+            <div class="control-group">
+                <label for="sepia">Sepia: <span id="sepia-value">0%</span></label>
+                <input type="range" id="sepia" min="0" max="100" value="0" step="1">
+            </div>
+
+            <div class="control-group">
+                <label>Drop Shadow</label>
+                <div class="drop-shadow-controls">
+                    <div>
+                        <label for="shadow-x">X-Offset: <span id="shadow-x-value">0px</span></label>
+                        <input type="range" id="shadow-x" min="-25" max="25" value="0">
+                    </div>
+                    <div>
+                        <label for="shadow-y">Y-Offset: <span id="shadow-y-value">0px</span></label>
+                        <input type="range" id="shadow-y" min="-25" max="25" value="0">
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label for="shadow-blur">Blur Radius: <span id="shadow-blur-value">0px</span></label>
+                        <input type="range" id="shadow-blur" min="0" max="50" value="0">
+                    </div>
+                    <div class="color-input-wrapper">
+                        <label for="shadow-color">Color:</label>
+                        <input type="color" id="shadow-color" value="#000000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="presets-gallery">
+                <h3>Filter Presets</h3>
+                <div class="presets" id="presets-container">
+                    <!-- Presets will be injected by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <main class="image-workspace">
+            <div class="image-preview-container" id="image-preview-container">
+                <img id="filtered-image" src="image copy 19.png" alt="Filtered image">
+                <div id="original-image-wrapper">
+                    <img id="original-image" src="image copy 19.png" alt="Original image">
+                </div>
+                <div id="image-comparison-slider"></div>
+            </div>
+            <div class="output-bar">
+                <pre id="css-output">filter: none;</pre>
+                <div class="action-buttons">
+                    <button id="copy-btn">Copy CSS</button>
+                    <button id="reset-btn">Reset All</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filteredImage = document.getElementById('filtered-image');
+            const originalImage = document.getElementById('original-image');
+            const cssOutput = document.getElementById('css-output');
+            const copyBtn = document.getElementById('copy-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const imageUpload = document.getElementById('image-upload');
+            const themeToggle = document.getElementById('theme-toggle');
+
+            const controls = {
+                blur: {
+                    el: document.getElementById('blur'),
+                    unit: 'px',
+                    default: 0,
+                    valId: 'blur-value'
+                },
+                brightness: {
+                    el: document.getElementById('brightness'),
+                    unit: '%',
+                    default: 100,
+                    valId: 'brightness-value'
+                },
+                contrast: {
+                    el: document.getElementById('contrast'),
+                    unit: '%',
+                    default: 100,
+                    valId: 'contrast-value'
+                },
+                grayscale: {
+                    el: document.getElementById('grayscale'),
+                    unit: '%',
+                    default: 0,
+                    valId: 'grayscale-value'
+                },
+                invert: {
+                    el: document.getElementById('invert'),
+                    unit: '%',
+                    default: 0,
+                    valId: 'invert-value'
+                },
+                saturate: {
+                    el: document.getElementById('saturate'),
+                    unit: '%',
+                    default: 100,
+                    valId: 'saturate-value'
+                },
+                sepia: {
+                    el: document.getElementById('sepia'),
+                    unit: '%',
+                    default: 0,
+                    valId: 'sepia-value'
+                },
+            };
+
+            const shadowControls = {
+                x: {
+                    el: document.getElementById('shadow-x'),
+                    default: 0,
+                    valId: 'shadow-x-value'
+                },
+                y: {
+                    el: document.getElementById('shadow-y'),
+                    default: 0,
+                    valId: 'shadow-y-value'
+                },
+                blur: {
+                    el: document.getElementById('shadow-blur'),
+                    default: 0,
+                    valId: 'shadow-blur-value'
+                },
+                color: {
+                    el: document.getElementById('shadow-color'),
+                    default: '#000000'
+                },
+            };
+
+            const presets = {
+                'Vintage': {
+                    blur: 0,
+                    brightness: 110,
+                    contrast: 110,
+                    grayscale: 0,
+                    invert: 0,
+                    saturate: 150,
+                    sepia: 70
+                },
+                'Golden Hour': {
+                    blur: 0,
+                    brightness: 120,
+                    contrast: 90,
+                    grayscale: 0,
+                    invert: 0,
+                    saturate: 120,
+                    sepia: 20
+                },
+                'Icy': {
+                    blur: 0,
+                    brightness: 110,
+                    contrast: 110,
+                    grayscale: 0,
+                    invert: 0,
+                    saturate: 20,
+                    sepia: 0
+                },
+                'Noir': {
+                    blur: 0,
+                    brightness: 120,
+                    contrast: 140,
+                    grayscale: 100,
+                    invert: 0,
+                    saturate: 0,
+                    sepia: 0
+                },
+                'Muted': {
+                    blur: 0,
+                    brightness: 110,
+                    contrast: 90,
+                    grayscale: 20,
+                    invert: 0,
+                    saturate: 80,
+                    sepia: 10
+                },
+                'Pop': {
+                    blur: 0,
+                    brightness: 110,
+                    contrast: 120,
+                    grayscale: 0,
+                    invert: 0,
+                    saturate: 150,
+                    sepia: 0
+                },
+            };
+
+            function applyFilters() {
+                let filterString = '';
+                let shadowString = '';
+
+                for (const key in controls) {
+                    const control = controls[key];
+                    const value = control.el.value;
+                    document.getElementById(control.valId).textContent = value + control.unit;
+                    if (parseFloat(value) !== control.default) {
+                        filterString += `${key}(${value}${control.unit}) `;
+                    }
+                }
+
+                const shadowX = shadowControls.x.el.value;
+                const shadowY = shadowControls.y.el.value;
+                const shadowBlur = shadowControls.blur.el.value;
+                const shadowColor = shadowControls.color.el.value;
+
+                document.getElementById(shadowControls.x.valId).textContent = shadowX + 'px';
+                document.getElementById(shadowControls.y.valId).textContent = shadowY + 'px';
+                document.getElementById(shadowControls.blur.valId).textContent = shadowBlur + 'px';
+
+                if (shadowX != 0 || shadowY != 0 || shadowBlur != 0) {
+                    shadowString = `drop-shadow(${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor})`;
+                }
+
+                const finalFilter = (filterString + shadowString).trim();
+                filteredImage.style.filter = finalFilter || 'none';
+                cssOutput.textContent = `filter: ${finalFilter || 'none'};`;
+            }
+
+            function resetFilters() {
+                for (const key in controls) {
+                    controls[key].el.value = controls[key].default;
+                }
+                for (const key in shadowControls) {
+                    shadowControls[key].el.value = shadowControls[key].default;
+                }
+                applyFilters();
+            }
+
+            function applyPreset(name) {
+                const preset = presets[name];
+                if (!preset) return;
+                for (const key in preset) {
+                    if (controls[key]) {
+                        controls[key].el.value = preset[key];
+                    }
+                }
+                applyFilters();
+            }
+
+            function populatePresets() {
+                const container = document.getElementById('presets-container');
+                const baseSrc = filteredImage.src;
+                for (const name in presets) {
+                    const preset = presets[name];
+                    let filterStyle = '';
+                    for (const key in preset) {
+                        filterStyle += `${key}(${preset[key]}${controls[key].unit}) `;
+                    }
+
+                    const presetEl = document.createElement('div');
+                    presetEl.className = 'preset';
+                    presetEl.innerHTML = `
+                        <img src="${baseSrc}" style="filter: ${filterStyle.trim()}" alt="${name} preset preview">
+                        <span>${name}</span>
+                    `;
+                    presetEl.addEventListener('click', () => applyPreset(name));
+                    container.appendChild(presetEl);
+                }
+            }
+
+            Object.values(controls).forEach(c => c.el.addEventListener('input', applyFilters));
+            Object.values(shadowControls).forEach(c => c.el.addEventListener('input', applyFilters));
+            resetBtn.addEventListener('click', resetFilters);
+
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(cssOutput.textContent).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy CSS';
+                    }, 1500);
+                });
+            });
+
+            imageUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const imageUrl = event.target.result;
+                        filteredImage.src = imageUrl;
+                        originalImage.src = imageUrl;
+                        document.getElementById('presets-container').innerHTML = '';
+                        populatePresets();
+                        resetImageComparison();
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = filteredImage.src;
+                img.onload = () => {
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    ctx.filter = filteredImage.style.filter;
+                    ctx.drawImage(img, 0, 0);
+
+                    const link = document.createElement('a');
+                    link.download = 'filtered-image.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
+            });
+
+            // Theme switcher
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('filter-studio-theme', theme);
+                themeToggle.checked = theme === 'dark';
+            }
+
+            themeToggle.addEventListener('change', () => {
+                setTheme(themeToggle.checked ? 'dark' : 'light');
+            });
+
+            const savedTheme = localStorage.getItem('filter-studio-theme') || 'dark';
+            setTheme(savedTheme);
+
+            // Image comparison slider
+            const slider = document.getElementById('image-comparison-slider');
+            const container = document.getElementById('image-preview-container');
+            const originalWrapper = document.getElementById('original-image-wrapper');
+            let isDragging = false;
+
+            function moveSlider(e) {
+                if (!isDragging) return;
+                const rect = container.getBoundingClientRect();
+                let x = (e.clientX || e.touches[0].clientX) - rect.left;
+                x = Math.max(0, Math.min(x, rect.width));
+                const percent = (x / rect.width) * 100;
+                slider.style.left = `${percent}%`;
+                originalWrapper.style.width = `${percent}%`;
+            }
+
+            function resetImageComparison() {
+                const rect = filteredImage.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+
+                originalImage.style.width = `${rect.width}px`;
+                originalImage.style.height = `${rect.height}px`;
+                originalImage.style.top = `${(containerRect.height - rect.height) / 2}px`;
+                originalImage.style.left = `${(containerRect.width - rect.width) / 2}px`;
+            }
+
+            slider.addEventListener('mousedown', () => isDragging = true);
+            slider.addEventListener('touchstart', () => isDragging = true);
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('touchend', () => isDragging = false);
+            window.addEventListener('mousemove', moveSlider);
+            window.addEventListener('touchmove', moveSlider);
+            window.addEventListener('resize', resetImageComparison);
+
+
+            // Initial setup
+            applyFilters();
+            populatePresets();
+            filteredImage.onload = resetImageComparison;
+            if (filteredImage.complete) resetImageComparison();
+        });
+    </script>
+</body>
+
+</html>

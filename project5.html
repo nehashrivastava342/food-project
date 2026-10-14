@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Box Model Visualizer</title>
+    <style>
+         :root {
+            --bg-color: #eef1f5;
+            --app-bg: #ffffff;
+            --panel-bg: #f8f9fa;
+            --content-bg: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            --padding-bg: rgba(0, 123, 255, 0.2);
+            --margin-bg: rgba(255, 193, 7, 0.2);
+            --border-color-default: #dee2e6;
+            --text-color: #212529;
+            --light-text-color: #fff;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --primary-color: #0d6efd;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .visualizer-app {
+            display: flex;
+            gap: 2rem;
+            background: var(--app-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 1100px;
+            flex-wrap: wrap;
+        }
+        /* --- Controls Panel --- */
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .controls-panel h1 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color-default);
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        #css-output {
+            background-color: #212529;
+            color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', 'Courier New', Courier, monospace;
+            white-space: pre;
+            overflow-x: auto;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+        
+        .copy-btn {
+            padding: 0.3rem 0.6rem;
+            border: 1px solid #495057;
+            background: #343a40;
+            color: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        #reset-all-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1.5rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #6c757d;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #reset-all-btn:hover {
+            background-color: #5a6268;
+        }
+        /* --- Display Panel --- */
+        
+        .display-panel {
+            flex: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            min-height: 400px;
+            padding: 2rem;
+        }
+        
+        .margin-box {
+            background-color: var(--margin-bg);
+            transition: all 0.2s ease-out;
+        }
+        
+        .border-box {
+            background-color: var(--padding-bg);
+            transition: all 0.2s ease-out;
+        }
+        
+        .content-box {
+            width: 150px;
+            height: 150px;
+            background: var(--content-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light-text-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="visualizer-app">
+        <div class="controls-panel">
+            <h1>CSS Box Model Visualizer</h1>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="padding">Padding</button>
+                <button class="tab-btn" data-tab="margin">Margin</button>
+                <button class="tab-btn" data-tab="border">Border</button>
+                <button class="tab-btn" data-tab="radius">Radius</button>
+            </div>
+
+            <div id="padding-tab" class="tab-content active">
+                <!-- Padding Controls -->
+                <div class="control-group">
+                    <label>Top: <span id="padding-top-value">20</span>px</label>
+                    <input type="range" id="padding-top" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Right: <span id="padding-right-value">20</span>px</label>
+                    <input type="range" id="padding-right" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Bottom: <span id="padding-bottom-value">20</span>px</label>
+                    <input type="range" id="padding-bottom" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Left: <span id="padding-left-value">20</span>px</label>
+                    <input type="range" id="padding-left" min="0" max="100" value="20">
+                </div>
+            </div>
+
+            <div id="margin-tab" class="tab-content">
+                <!-- Margin Controls -->
+                <div class="control-group">
+                    <label>Top: <span id="margin-top-value">20</span>px</label>
+                    <input type="range" id="margin-top" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Right: <span id="margin-right-value">20</span>px</label>
+                    <input type="range" id="margin-right" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Bottom: <span id="margin-bottom-value">20</span>px</label>
+                    <input type="range" id="margin-bottom" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Left: <span id="margin-left-value">20</span>px</label>
+                    <input type="range" id="margin-left" min="0" max="100" value="20">
+                </div>
+            </div>
+
+            <div id="border-tab" class="tab-content">
+                <!-- Border Controls -->
+                <div class="control-group">
+                    <label>Width: <span id="border-width-value">4</span>px</label>
+                    <input type="range" id="border-width" min="0" max="20" value="4">
+                </div>
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label for="border-style">Style</label>
+                        <select id="border-style" style="width:100%; padding: 0.5rem;">
+                            <option>solid</option>
+                            <option>dashed</option>
+                            <option>dotted</option>
+                            <option>double</option>
+                            <option>groove</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="border-color">Color</label>
+                        <input type="color" id="border-color" value="#343a40" style="width:100%; height: 2.25rem;">
+                    </div>
+                </div>
+            </div>
+
+            <div id="radius-tab" class="tab-content">
+                <!-- Border Radius Controls -->
+                <div class="control-group">
+                    <label>All Corners: <span id="radius-all-value">8</span>px</label>
+                    <input type="range" id="radius-all" min="0" max="150" value="8">
+                </div>
+                <hr>
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label>Top-Left: <span id="radius-tl-value">8</span>px</label>
+                        <input type="range" id="radius-tl" min="0" max="150" value="8">
+                    </div>
+                    <div class="control-group">
+                        <label>Top-Right: <span id="radius-tr-value">8</span>px</label>
+                        <input type="range" id="radius-tr" min="0" max="150" value="8">
+                    </div>
+                    <div class="control-group">
+                        <label>Bottom-Right: <span id="radius-br-value">8</span>px</label>
+                        <input type="range" id="radius-br" min="0" max="150" value="8">
+                    </div>
+                    <div class="control-group">
+                        <label>Bottom-Left: <span id="radius-bl-value">8</span>px</label>
+                        <input type="range" id="radius-bl" min="0" max="150" value="8">
+                    </div>
+                </div>
+            </div>
+
+            <div class="output-header">
+                <h3>Live CSS</h3>
+                <button class="copy-btn" id="copy-css-btn">Copy CSS</button>
+            </div>
+            <pre id="css-output"><code>.box { ... }</code></pre>
+            <button id="reset-all-btn">Reset All</button>
+        </div>
+        <div class="display-panel">
+            <div class="margin-box" id="margin-box">
+                <div class="border-box" id="border-box">
+                    <div class="content-box">Content</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
+            margin: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
+            border: {
+                width: 4,
+                style: 'solid',
+                color: '#343a40'
+            },
+            radius: {
+                tl: 8,
+                tr: 8,
+                br: 8,
+                bl: 8
+            }
+        };
+
+        const elements = {
+            marginBox: document.getElementById('margin-box'),
+            borderBox: document.getElementById('border-box'),
+            cssOutput: document.querySelector('#css-output code'),
+            copyBtn: document.getElementById('copy-css-btn'),
+            resetBtn: document.getElementById('reset-all-btn'),
+            tabs: document.querySelectorAll('.tab-btn'),
+            tabContents: document.querySelectorAll('.tab-content')
+        };
+
+        const inputs = {
+            padding: {
+                top: document.getElementById('padding-top'),
+                right: document.getElementById('padding-right'),
+                bottom: document.getElementById('padding-bottom'),
+                left: document.getElementById('padding-left'),
+            },
+            margin: {
+                top: document.getElementById('margin-top'),
+                right: document.getElementById('margin-right'),
+                bottom: document.getElementById('margin-bottom'),
+                left: document.getElementById('margin-left'),
+            },
+            border: {
+                width: document.getElementById('border-width'),
+                style: document.getElementById('border-style'),
+                color: document.getElementById('border-color'),
+            },
+            radius: {
+                all: document.getElementById('radius-all'),
+                tl: document.getElementById('radius-tl'),
+                tr: document.getElementById('radius-tr'),
+                br: document.getElementById('radius-br'),
+                bl: document.getElementById('radius-bl'),
+            }
+        };
+
+        const valueSpans = {
+            padding: {
+                top: document.getElementById('padding-top-value'),
+                right: document.getElementById('padding-right-value'),
+                bottom: document.getElementById('padding-bottom-value'),
+                left: document.getElementById('padding-left-value'),
+            },
+            margin: {
+                top: document.getElementById('margin-top-value'),
+                right: document.getElementById('margin-right-value'),
+                bottom: document.getElementById('margin-bottom-value'),
+                left: document.getElementById('margin-left-value'),
+            },
+            border: {
+                width: document.getElementById('border-width-value'),
+            },
+            radius: {
+                all: document.getElementById('radius-all-value'),
+                tl: document.getElementById('radius-tl-value'),
+                tr: document.getElementById('radius-tr-value'),
+                br: document.getElementById('radius-br-value'),
+                bl: document.getElementById('radius-bl-value'),
+            }
+        };
+
+        function updateUI() {
+            // Apply styles
+            const {
+                padding,
+                margin,
+                border,
+                radius
+            } = state;
+            elements.marginBox.style.padding = `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`;
+            elements.borderBox.style.padding = `${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px`;
+            elements.borderBox.style.border = `${border.width}px ${border.style} ${border.color}`;
+            elements.borderBox.style.borderRadius = `${radius.tl}px ${radius.tr}px ${radius.br}px ${radius.bl}px`;
+
+            // Update CSS output
+            elements.cssOutput.textContent = `.box {\n` +
+                `  padding: ${padding.top}px ${padding.right}px ${padding.bottom}px ${padding.left}px;\n` +
+                `  margin: ${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px;\n` +
+                `  border: ${border.width}px ${border.style} ${border.color};\n` +
+                `  border-radius: ${radius.tl}px ${radius.tr}px ${radius.br}px ${radius.bl}px;\n` +
+                `}`;
+        }
+
+        function setupEventListeners() {
+            // Tabs
+            elements.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    elements.tabs.forEach(t => t.classList.remove('active'));
+                    elements.tabContents.forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                });
+            });
+
+            // Controls
+            ['padding', 'margin'].forEach(type => {
+                Object.keys(inputs[type]).forEach(side => {
+                    inputs[type][side].addEventListener('input', (e) => {
+                        const value = e.target.value;
+                        state[type][side] = Number(value);
+                        valueSpans[type][side].textContent = value;
+                        updateUI();
+                    });
+                });
+            });
+
+            Object.keys(inputs.border).forEach(prop => {
+                inputs.border[prop].addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    state.border[prop] = prop === 'width' ? Number(value) : value;
+                    if (prop === 'width') valueSpans.border.width.textContent = value;
+                    updateUI();
+                });
+            });
+
+            inputs.radius.all.addEventListener('input', (e) => {
+                const value = e.target.value;
+                Object.keys(state.radius).forEach(side => {
+                    state.radius[side] = Number(value);
+                    inputs.radius[side].value = value;
+                    valueSpans.radius[side].textContent = value;
+                });
+                valueSpans.radius.all.textContent = value;
+                updateUI();
+            });
+
+            ['tl', 'tr', 'br', 'bl'].forEach(side => {
+                inputs.radius[side].addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    state.radius[side] = Number(value);
+                    valueSpans.radius[side].textContent = value;
+                    updateUI();
+                });
+            });
+
+            // Buttons
+            elements.copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(elements.cssOutput.textContent).then(() => {
+                    elements.copyBtn.textContent = 'Copied!';
+                    setTimeout(() => elements.copyBtn.textContent = 'Copy CSS', 2000);
+                });
+            });
+
+            elements.resetBtn.addEventListener('click', () => {
+                // Reset state and inputs to initial values
+                location.reload(); // Easiest way to reset everything
+            });
+        }
+
+        // Initial setup
+        setupEventListeners();
+        updateUI();
+    </script>
+</body>
+
+</html>

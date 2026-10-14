@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 3D Transform & Animation Studio</title>
+    <style>
+         :root {
+            --bg-color: #1a1a1a;
+            --container-bg: #2c2c2c;
+            --text-color: #f0f0f0;
+            --primary-color: #00aaff;
+            --border-color: #444;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .visualizer-app {
+            display: flex;
+            gap: 2rem;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .controls-panel h1 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        legend {
+            font-weight: 600;
+            color: var(--primary-color);
+            padding: 0 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .control-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #444;
+            border-radius: 4px;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        #css-output {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            height: 150px;
+            overflow-y: auto;
+        }
+        
+        #reset-btn {
+            width: 100%;
+            padding: 0.85rem;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #reset-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .display-panel {
+            flex: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 450px;
+            border-radius: 8px;
+            transition: perspective 0.4s ease;
+        }
+        
+        .scene {
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            animation: subtle-rotate 20s linear infinite;
+        }
+        
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.4s ease;
+        }
+        
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 170, 255, 0.7);
+            border: 2px solid var(--primary-color);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .front {
+            transform: rotateY(0deg) translateZ(100px);
+        }
+        
+        .back {
+            transform: rotateY(180deg) translateZ(100px);
+        }
+        
+        .right {
+            transform: rotateY(90deg) translateZ(100px);
+        }
+        
+        .left {
+            transform: rotateY(-90deg) translateZ(100px);
+        }
+        
+        .top {
+            transform: rotateX(90deg) translateZ(100px);
+        }
+        
+        .bottom {
+            transform: rotateX(-90deg) translateZ(100px);
+        }
+        
+        @keyframes subtle-rotate {
+            from {
+                transform: rotateY(0deg) rotateX(10deg);
+            }
+            to {
+                transform: rotateY(360deg) rotateX(10deg);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .visualizer-app {
+                flex-direction: column;
+            }
+            .display-panel {
+                min-height: 350px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="visualizer-app">
+        <div class="controls-panel">
+            <h1>3D Transform Studio</h1>
+
+            <fieldset>
+                <legend>Scene</legend>
+                <div class="control-group">
+                    <label for="perspective">Perspective: <span id="persp-value">800</span>px</label>
+                    <input type="range" id="perspective" min="200" max="2000" value="800">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>3D Transforms</legend>
+                <div class="control-group">
+                    <label for="rotateX">Rotate X: <span id="rx-value">0</span>deg</label>
+                    <input type="range" id="rotateX" min="-180" max="180" value="0">
+                </div>
+                <div class="control-group">
+                    <label for="rotateY">Rotate Y: <span id="ry-value">0</span>deg</label>
+                    <input type="range" id="rotateY" min="-180" max="180" value="0">
+                </div>
+                <div class="control-group">
+                    <label for="rotateZ">Rotate Z: <span id="rz-value">0</span>deg</label>
+                    <input type="range" id="rotateZ" min="-180" max="180" value="0">
+                </div>
+            </fieldset>
+
+            <pre id="css-output"><code></code></pre>
+            <button id="reset-btn">Reset All</button>
+        </div>
+        <div class="display-panel" id="display-panel">
+            <div class="scene">
+                <div class="cube" id="cube">
+                    <div class="face front">Front</div>
+                    <div class="face back">Back</div>
+                    <div class="face right">Right</div>
+                    <div class="face left">Left</div>
+                    <div class="face top">Top</div>
+                    <div class="face bottom">Bottom</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const controls = {
+            perspective: document.getElementById('perspective'),
+            rotateX: document.getElementById('rotateX'),
+            rotateY: document.getElementById('rotateY'),
+            rotateZ: document.getElementById('rotateZ')
+        };
+
+        const values = {
+            perspective: document.getElementById('persp-value'),
+            rotateX: document.getElementById('rx-value'),
+            rotateY: document.getElementById('ry-value'),
+            rotateZ: document.getElementById('rz-value')
+        };
+
+        const displayPanel = document.getElementById('display-panel');
+        const cube = document.getElementById('cube');
+        const cssOutput = document.querySelector('#css-output code');
+        const resetButton = document.getElementById('reset-btn');
+
+        const defaults = {
+            perspective: 800,
+            rotateX: 0,
+            rotateY: 0,
+            rotateZ: 0
+        };
+
+        function updateStyles() {
+            const persp = controls.perspective.value;
+            const rx = controls.rotateX.value;
+            const ry = controls.rotateY.value;
+            const rz = controls.rotateZ.value;
+
+            // Update display panel perspective
+            displayPanel.style.perspective = `${persp}px`;
+            values.perspective.textContent = persp;
+
+            // Update cube transform
+            cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+            values.rotateX.textContent = rx;
+            values.rotateY.textContent = ry;
+            values.rotateZ.textContent = rz;
+
+            // Update CSS code output
+            let cssText = `.display-panel {\n  perspective: ${persp}px;\n}\n\n`;
+            cssText += `.cube {\n  transform: rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg);\n}`;
+            cssOutput.textContent = cssText;
+        }
+
+        // Add event listeners to all sliders
+        for (const key in controls) {
+            controls[key].addEventListener('input', updateStyles);
+        }
+
+        // Reset functionality
+        resetButton.addEventListener('click', () => {
+            for (const key in controls) {
+                controls[key].value = defaults[key];
+            }
+            updateStyles();
+        });
+
+        // Initial update on page load
+        updateStyles();
+    </script>
+</body>
+
+</html>

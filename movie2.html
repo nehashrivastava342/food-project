@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Interactive Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --primary-color: #007BFF;
+            --secondary-color: #333;
+            --light-text-color: #f4f4f9;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --bg-color-light: #f4f4f9;
+            --card-bg-light: #ffffff;
+            --text-color-light: #333;
+            --header-bg-light: rgba(255, 255, 255, 0.8);
+            --bg-color-dark: #121212;
+            --card-bg-dark: #1e1e1e;
+            --text-color-dark: #e0e0e0;
+            --header-bg-dark: rgba(30, 30, 30, 0.7);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body[data-theme="light"] {
+            background-color: var(--bg-color-light);
+            color: var(--text-color-light);
+        }
+        
+        body[data-theme="dark"] {
+            background: linear-gradient(45deg, #121212, #1a2a3a, #121212);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            color: var(--text-color-dark);
+        }
+        
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        /* --- Custom Scrollbar --- */
+        
+         ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: #2c2c2c;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+        /* --- Header & Navigation --- */
+        
+        .main-header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: background-color 0.3s;
+        }
+        
+        body[data-theme="light"] .main-header {
+            background-color: var(--header-bg-light);
+            border-bottom: 1px solid #ddd;
+        }
+        
+        body[data-theme="dark"] .main-header {
+            background-color: var(--header-bg-dark);
+            border-bottom: 1px solid #333;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .main-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .main-nav a {
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        body[data-theme="light"] .main-nav a {
+            color: var(--text-color-light);
+        }
+        
+        body[data-theme="dark"] .main-nav a {
+            color: var(--light-text-color);
+        }
+        
+        .main-nav a:hover {
+            color: var(--primary-color);
+        }
+        
+        .hamburger {
+            display: none;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        /* --- Theme Toggle --- */
+        
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .theme-switch-checkbox {
+            display: none;
+        }
+        
+        .theme-switch-label {
+            width: 50px;
+            height: 26px;
+            background: #555;
+            border-radius: 13px;
+            position: relative;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+        
+        .theme-switch-label .ball {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        
+        .theme-switch-checkbox:checked+.theme-switch-label {
+            background: var(--primary-color);
+        }
+        
+        .theme-switch-checkbox:checked+.theme-switch-label .ball {
+            transform: translateX(24px);
+        }
+        
+        .theme-icon {
+            font-size: 14px;
+        }
+        /* --- Main Content --- */
+        
+        main {
+            padding: 2rem;
+            perspective: 1000px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 5rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            transition: transform 0.1s linear;
+        }
+        
+        body[data-theme="light"] .hero {
+            background-color: var(--card-bg-light);
+        }
+        
+        body[data-theme="dark"] .hero {
+            background-color: var(--card-bg-dark);
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.4s, box-shadow 0.4s, opacity 0.4s;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        body[data-theme="light"] .card {
+            background-color: var(--card-bg-light);
+            box-shadow: var(--shadow);
+        }
+        
+        body[data-theme="dark"] .card {
+            background-color: var(--card-bg-dark);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        body[data-theme="dark"] .card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+        }
+        
+        .card-image-container {
+            overflow: hidden;
+        }
+        
+        .card-image-container img,
+        .card-image-container iframe {
+            transition: transform 0.4s;
+        }
+        
+        .card:hover .card-image-container img,
+        .card:hover .card-image-container iframe {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .card-content h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .card-content img,
+        .card-content iframe {
+            max-width: 100%;
+            border-radius: 4px;
+            border: none;
+        }
+        
+        .card-content a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        /* --- Footer --- */
+        
+        .main-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        body[data-theme="light"] .main-footer {
+            background-color: #e9ecef;
+        }
+        
+        body[data-theme="dark"] .main-footer {
+            background-color: #1e1e1e;
+        }
+        /* --- Back to Top Button --- */
+        
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        #back-to-top.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* --- Responsive --- */
+        
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                padding: 1rem 0;
+            }
+            body[data-theme="light"] .main-nav {
+                background-color: var(--header-bg-light);
+            }
+            body[data-theme="dark"] .main-nav {
+                background-color: var(--header-bg-dark);
+            }
+            .main-nav.active {
+                display: flex;
+            }
+            .main-nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            .hamburger {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="dark">
+
+    <header class="main-header">
+        <div class="logo">MyWebsite</div>
+        <div class="nav-container">
+            <nav class="main-nav" id="main-nav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#info">Info</a></li>
+                </ul>
+            </nav>
+            <div class="theme-switch">
+                <input type="checkbox" class="theme-switch-checkbox" id="theme-switch">
+                <label class="theme-switch-label" for="theme-switch">
+                    <span class="theme-icon">☀️</span>
+                    <span class="theme-icon">🌙</span>
+                    <div class="ball"></div>
+                </label>
+            </div>
+            <div class="hamburger" id="hamburger">&#9776;</div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero animated-section">
+            <h1>Welcome to My Website</h1>
+            <p>Discover amazing content below.</p>
+        </section>
+
+        <div class="content-grid">
+            <section id="gallery" class="card animated-section">
+                <div class="card-image-container">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/03u4xyj0TH4?si=fqXr4U1Qrt-ZRezt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="card-content">
+                    <h2>Featured Video</h2>
+                    <p>Wednesday Trailer</p>
+                </div>
+            </section>
+
+            <section class="card animated-section">
+                <div class="card-image-container">
+                    <a href="https://in.pinterest.com/pin/15973773674659478"><img src="image copy 11.png" alt="Wednesday Addams at Nevermore" style="width:100%;"></a>
+                </div>
+                <div class="card-content">
+                    <h2>Wednesday Addams-Nevermore</h2>
+                </div>
+            </section>
+
+            <section id="info" class="card animated-section">
+                <div class="card-image-container">
+                    <a href="https://en.wikipedia.org/wiki/Jenna_Ortega" target="_blank">
+                        <img src="image copy 13.png" alt="Jenna Ortega" style="width:100%;">
+                    </a>
+                </div>
+                <div class="card-content">
+                    <h2>More Information</h2>
+                    <p>Click image for more info on Jenna Ortega.</p>
+                </div>
+            </section>
+
+            <section class="card animated-section">
+                <div class="card-image-container">
+                    <a href="https://en.wikipedia.org/wiki/Wednesday_(TV_series)#/media/File:Cantacuzino_Castle_(April_2023)_01.jpg" target="_blank">
+                        <img src="image copy 12.png" alt="Nevermore Academy Castle" style="width:100%;">
+                    </a>
+                </div>
+                <div class="card-content">
+                    <h2>Discover Nevermore</h2>
+                    <p>Click image for more info on the filming location.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; 2024 MyWebsite. All Rights Reserved.</p>
+    </footer>
+
+    <button id="back-to-top" title="Go to top">↑</button>
+
+    <script>
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('main-nav');
+        hamburger.addEventListener('click', () => nav.classList.toggle('active'));
+
+        // Theme Switcher
+        const themeSwitch = document.getElementById('theme-switch');
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', currentTheme);
+        themeSwitch.checked = currentTheme === 'dark';
+        themeSwitch.addEventListener('change', (e) => {
+            const newTheme = e.target.checked ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Scroll Animations
+        const animatedSections = document.querySelectorAll('.animated-section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100); // Staggered delay
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        animatedSections.forEach(section => observer.observe(section));
+
+        // Hero Parallax Effect
+        const hero = document.querySelector('.hero');
+        hero.addEventListener('mousemove', (e) => {
+            const {
+                left,
+                top,
+                width,
+                height
+            } = hero.getBoundingClientRect();
+            const x = (e.clientX - left) / width - 0.5;
+            const y = (e.clientY - top) / height - 0.5;
+            const rotateY = x * 10; // Max rotation
+            const rotateX = -y * 10;
+            hero.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+        });
+        hero.addEventListener('mouseleave', () => {
+            hero.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+        });
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                if (!backToTopButton.style.display) {
+                    backToTopButton.style.display = 'flex';
+                    setTimeout(() => backToTopButton.classList.add('visible'), 10);
+                }
+            } else {
+                backToTopButton.classList.remove('visible');
+                setTimeout(() => {
+                    if (!backToTopButton.classList.contains('visible')) {
+                        backToTopButton.style.display = 'none';
+                    }
+                }, 300);
+            }
+        });
+        backToTopButton.addEventListener('click', () => window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        }));
+    </script>
+
+</body>
+
+</html>

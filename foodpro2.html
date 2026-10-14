@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodeat - A Gourmet Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+         :root {
+            --primary-color: #d4af37;
+            /* Gold */
+            --background-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --heading-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Lora', serif;
+            margin: 0;
+            background-color: var(--background-color);
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%232a2a2a" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        /* Header */
+        
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: background-color 0.4s, box-shadow 0.4s;
+        }
+        
+        header.scrolled {
+            background-color: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px var(--shadow-color);
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2.5rem;
+            margin: 0;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--heading-color);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary-color);
+        }
+        /* Hero Section */
+        
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 5%;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('image copy 14.png') no-repeat center center/cover;
+            color: var(--heading-color);
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0 0.5rem;
+        }
+        
+        .btn.primary {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+        }
+        
+        .btn.outline {
+            background-color: transparent;
+            color: var(--primary-color);
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+        }
+        /* General Section Styling */
+        
+        .section {
+            padding: 6rem 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--heading-color);
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 4rem;
+        }
+        /* Menu Section */
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .menu-card {
+            background: var(--card-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.4s, box-shadow 0.4s;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+        }
+        
+        .menu-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .menu-card-content {
+            padding: 2rem;
+        }
+        
+        .menu-card h3 {
+            font-family: 'Playfair Display', serif;
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--heading-color);
+        }
+        
+        .menu-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .menu-card span {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: block;
+            margin-top: 1rem;
+        }
+        /* Fries Section */
+        
+        .fries-section {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            text-align: left;
+        }
+        
+        .fries-section img {
+            max-width: 40%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+        /* Footer */
+        
+        footer {
+            background-color: #0a0a0a;
+            padding: 4rem 5% 2rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            text-align: left;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-col h4 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-size: 1.4rem;
+        }
+        
+        .footer-col p,
+        .footer-col a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-bottom: 0.8rem;
+            display: block;
+            transition: color 0.3s;
+        }
+        
+        .footer-col a:hover {
+            color: var(--primary-color);
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header">
+        <div class="logo">Foodeat</div>
+        <nav>
+            <ul>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#footer">Service</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1>Delicious food is waiting for you</h1>
+                <p>We serve the best food in the city, crafted with passion and the finest ingredients.</p>
+                <div>
+                    <a href="#menu" class="btn primary">Food Menu</a>
+                    <a href="#" class="btn outline">Book a Table</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="menu">
+            <h2 class="section-title">Our Top List</h2>
+            <p class="section-subtitle">Our mainstay menu, loved by everyone.</p>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <img src="image copy 16.png" alt="Spaghetti Carbonara">
+                    <div class="menu-card-content">
+                        <h3>Spaghetti Carbonara</h3>
+                        <p>Made with spaghetti, eggs, bacon, and Parmesan cheese.</p>
+                        <span>$12</span>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <img src="image copy 17.png" alt="White Sauce Pasta">
+                    <div class="menu-card-content">
+                        <h3>White Sauce Pasta</h3>
+                        <p>Made with white wine, garlic, and herbs.</p>
+                        <span>$15</span>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <img src="image copy 18.png" alt="Garlic Bread">
+                    <div class="menu-card-content">
+                        <h3>Garlic Bread</h3>
+                        <p>Made with garlic, bread, and herbs.</p>
+                        <span>$8</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section fries-section" id="about">
+            <img src="image copy 15.png" alt="French Fries">
+            <div>
+                <h2 class="section-title">Best Potatoes for French Fries</h2>
+                <p>French fries are made with potatoes, salt, and oil. Russet potatoes are ideal. Since they're dense, they don't contain as much water inside, which allows them to get extra crispy.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Services</h4>
+                <a href="#">Online Booking</a>
+                <a href="#">Catering Service</a>
+                <a href="#">Membership</a>
+                <a href="#">Delivery Service</a>
+            </div>
+            <div class="footer-col">
+                <h4>Foodeat</h4>
+                <p>The ultimate destination for gourmet food lovers. Experience culinary excellence.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <p>123 Gourmet St, Food City</p>
+                <p>contact@foodeat.com</p>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Foodeat. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sticky header on scroll
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Scroll-triggered animations for sections
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+
+</html>

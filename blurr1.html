@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive CSS Filter Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+         :root {
+            --background-color: #1a1a1d;
+            --primary-color: #4e4e50;
+            --secondary-color: #c3073f;
+            --text-color: #f5f5f5;
+            --control-panel-bg: #2a2a2d;
+            --input-bg: #3a3a3d;
+            --border-color: #444;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: auto;
+        }
+        
+        h1 {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--secondary-color);
+            text-align: center;
+            grid-column: 1 / -1;
+            margin-bottom: 1rem;
+        }
+        
+        .controls {
+            background-color: var(--control-panel-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+        }
+        
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        
+        .image-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--control-panel-bg);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+        
+        #filtered-image {
+            max-width: 100%;
+            max-height: 70vh;
+            transition: filter 0.1s ease-out;
+            border-radius: 4px;
+        }
+        
+        .output-area {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+        }
+        
+        #css-output {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #a9dc76;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        button {
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #reset-btn {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        #reset-btn:hover {
+            background-color: #6a6a6d;
+        }
+        
+        #copy-btn {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        #copy-btn:hover {
+            background-color: #d43f6a;
+        }
+        
+        #upload-label {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        #image-upload {
+            display: none;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Interactive CSS Filter Playground</h1>
+
+        <div class="controls">
+            <div class="filter-group">
+                <label for="image-upload" id="upload-label">Upload Your Image</label>
+                <input type="file" id="image-upload" accept="image/*">
+            </div>
+            <div class="filter-group">
+                <label for="blur">Blur: <span id="blur-value">0</span>px</label>
+                <input type="range" id="blur" min="0" max="20" value="0" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="brightness">Brightness: <span id="brightness-value">100</span>%</label>
+                <input type="range" id="brightness" min="0" max="200" value="100" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="contrast">Contrast: <span id="contrast-value">100</span>%</label>
+                <input type="range" id="contrast" min="0" max="200" value="100" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="grayscale">Grayscale: <span id="grayscale-value">0</span>%</label>
+                <input type="range" id="grayscale" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="invert">Invert: <span id="invert-value">0</span>%</label>
+                <input type="range" id="invert" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="saturate">Saturate: <span id="saturate-value">100</span>%</label>
+                <input type="range" id="saturate" min="0" max="200" value="100" step="1">
+            </div>
+            <div class="filter-group">
+                <label for="sepia">Sepia: <span id="sepia-value">0</span>%</label>
+                <input type="range" id="sepia" min="0" max="100" value="0" step="1">
+            </div>
+            <div class="filter-group">
+                <label>Drop Shadow</label>
+                <input type="range" id="shadow-x" min="-20" max="20" value="0">
+                <input type="range" id="shadow-y" min="-20" max="20" value="0">
+                <input type="range" id="shadow-blur" min="0" max="40" value="0">
+                <input type="color" id="shadow-color" value="#000000">
+            </div>
+        </div>
+
+        <div class="image-preview">
+            <img id="filtered-image" src="image copy 19.png" alt="Apply filters to this image">
+        </div>
+
+        <div class="output-area">
+            <pre id="css-output">filter: none;</pre>
+            <div class="buttons">
+                <button id="copy-btn">Copy CSS</button>
+                <button id="reset-btn">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const image = document.getElementById('filtered-image');
+        const cssOutput = document.getElementById('css-output');
+        const copyBtn = document.getElementById('copy-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const imageUpload = document.getElementById('image-upload');
+
+        const filters = {
+            blur: {
+                el: document.getElementById('blur'),
+                unit: 'px',
+                default: 0
+            },
+            brightness: {
+                el: document.getElementById('brightness'),
+                unit: '%',
+                default: 100
+            },
+            contrast: {
+                el: document.getElementById('contrast'),
+                unit: '%',
+                default: 100
+            },
+            grayscale: {
+                el: document.getElementById('grayscale'),
+                unit: '%',
+                default: 0
+            },
+            invert: {
+                el: document.getElementById('invert'),
+                unit: '%',
+                default: 0
+            },
+            saturate: {
+                el: document.getElementById('saturate'),
+                unit: '%',
+                default: 100
+            },
+            sepia: {
+                el: document.getElementById('sepia'),
+                unit: '%',
+                default: 0
+            },
+        };
+
+        const shadow = {
+            x: document.getElementById('shadow-x'),
+            y: document.getElementById('shadow-y'),
+            blur: document.getElementById('shadow-blur'),
+            color: document.getElementById('shadow-color'),
+        };
+
+        function updateFilters() {
+            let filterString = '';
+            let shadowString = '';
+
+            for (const key in filters) {
+                const filter = filters[key];
+                const value = filter.el.value;
+                document.getElementById(`${key}-value`).textContent = value;
+                if (parseFloat(value) !== filter.default) {
+                    filterString += `${key}(${value}${filter.unit}) `;
+                }
+            }
+
+            const shadowX = shadow.x.value;
+            const shadowY = shadow.y.value;
+            const shadowBlur = shadow.blur.value;
+            const shadowColor = shadow.color.value;
+
+            if (shadowX != 0 || shadowY != 0 || shadowBlur != 0) {
+                shadowString = `drop-shadow(${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowColor})`;
+            }
+
+            const finalFilter = (filterString + shadowString).trim();
+            image.style.filter = finalFilter || 'none';
+            cssOutput.textContent = `filter: ${finalFilter || 'none'};`;
+        }
+
+        for (const key in filters) {
+            filters[key].el.addEventListener('input', updateFilters);
+        }
+        for (const key in shadow) {
+            shadow[key].addEventListener('input', updateFilters);
+        }
+
+        resetBtn.addEventListener('click', () => {
+            for (const key in filters) {
+                filters[key].el.value = filters[key].default;
+            }
+            shadow.x.value = 0;
+            shadow.y.value = 0;
+            shadow.blur.value = 0;
+            shadow.color.value = '#000000';
+            updateFilters();
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(cssOutput.textContent).then(() => {
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy CSS';
+                }, 1500);
+            });
+        });
+
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    image.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        updateFilters(); // Initial call
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            height: 100px;
+            width: 100px;
+            background-color: red;
+            animation-name: myanimation;
+            animation-duration: 5s;
+            position: relative;
+            animation-duration: 5s;
+            animation-fill-mode: forwards;
+        }
+        
+        #div1 {
+            animation-timing-function: linear;
+        }
+        
+        #div2 {
+            animation-timing-function: ease-in;
+        }
+        
+        #div3 {
+            animation-timing-function: ease-out;
+        }
+        
+        #div4 {
+            animation-timing-function: ease-in-out;
+        }
+        
+        #div5 {
+            animation-timing-function: ease;
+        }
+        
+        @keyframes myanimation {
+            from {
+                left: 0px;
+            }
+            to {
+                left: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="div1"> linear</div>
+    <div id="div2"> ease-in</div>
+    <div id="div3"> ease-out</div>
+    <div id="div4"> ease-in-out</div>
+    <div id="div5"> ease</div>
+</body>
+
+</html>

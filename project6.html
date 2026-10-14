@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Animator & Visualizer</title>
+    <style>
+         :root {
+            --bg-color: #f0f2f5;
+            --container-bg: #ffffff;
+            --box-bg: linear-gradient(45deg, #007BFF, #00C6FF);
+            --text-color: #333;
+            --light-text-color: #fff;
+            --border-color: #ddd;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --primary-color: #007BFF;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .visualizer-app {
+            display: flex;
+            gap: 2rem;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .controls-panel h1 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        legend {
+            font-weight: 600;
+            color: var(--primary-color);
+            padding: 0 0.5rem;
+        }
+        
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .radio-group label {
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        
+        #css-output {
+            background-color: #2d2d2d;
+            color: var(--light-text-color);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            height: 200px;
+            overflow-y: auto;
+        }
+        
+        #reset-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #reset-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .display-panel {
+            flex: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            min-height: 400px;
+            padding: 2rem;
+            overflow: hidden;
+        }
+        
+        .outer-box {
+            background-color: var(--container-bg);
+            border: 2px dashed var(--border-color);
+            transition: padding 0.3s ease;
+        }
+        
+        .inner-box {
+            width: 150px;
+            height: 150px;
+            background: var(--box-bg);
+            border: 2px solid #0056b3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light-text-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        /* Animations */
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes continuous-spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .animate-spin {
+            animation: continuous-spin 4s linear infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="visualizer-app">
+        <div class="controls-panel">
+            <h1>CSS Animator & Visualizer</h1>
+
+            <fieldset>
+                <legend>Padding</legend>
+                <div class="control-group">
+                    <label for="padding-top">padding-top: <span id="pt-value">20</span>px</label>
+                    <input type="range" id="padding-top" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label for="padding-right">padding-right: <span id="pr-value">20</span>px</label>
+                    <input type="range" id="padding-right" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label for="padding-bottom">padding-bottom: <span id="pb-value">20</span>px</label>
+                    <input type="range" id="padding-bottom" min="0" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label for="padding-left">padding-left: <span id="pl-value">20</span>px</label>
+                    <input type="range" id="padding-left" min="0" max="100" value="20">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Transform</legend>
+                <div class="control-group">
+                    <label for="rotate">Rotate (Spin): <span id="rotate-value">0</span>deg</label>
+                    <input type="range" id="rotate" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label for="scale">Scale: <span id="scale-value">1</span></label>
+                    <input type="range" id="scale" min="0.5" max="2" value="1" step="0.1">
+                </div>
+                <div class="control-group">
+                    <label for="skewX">SkewX: <span id="skewX-value">0</span>deg</label>
+                    <input type="range" id="skewX" min="-45" max="45" value="0">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Layout</legend>
+                <div class="control-group radio-group">
+                    <label><input type="radio" name="float" value="none" checked> None</label>
+                    <label><input type="radio" name="float" value="left"> Left</label>
+                    <label><input type="radio" name="float" value="right"> Right</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Animations</legend>
+                <div class="control-group">
+                    <label for="animation-select">Apply Animation</label>
+                    <select id="animation-select">
+                        <option value="none">None</option>
+                        <option value="pulse">Pulse</option>
+                        <option value="spin">Continuous Spin</option>
+                    </select>
+                </div>
+            </fieldset>
+
+            <pre id="css-output"><code></code></pre>
+            <button id="reset-btn">Reset All</button>
+        </div>
+        <div class="display-panel">
+            <div class="outer-box" id="outer-box">
+                <div class="inner-box" id="inner-box">Animate Me!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const controls = {
+            padding: {
+                top: document.getElementById('padding-top'),
+                right: document.getElementById('padding-right'),
+                bottom: document.getElementById('padding-bottom'),
+                left: document.getElementById('padding-left')
+            },
+            transform: {
+                rotate: document.getElementById('rotate'),
+                scale: document.getElementById('scale'),
+                skewX: document.getElementById('skewX'),
+            },
+            layout: {
+                float: document.querySelectorAll('input[name="float"]')
+            },
+            animation: document.getElementById('animation-select')
+        };
+
+        const values = {
+            padding: {
+                top: document.getElementById('pt-value'),
+                right: document.getElementById('pr-value'),
+                bottom: document.getElementById('pb-value'),
+                left: document.getElementById('pl-value')
+            },
+            transform: {
+                rotate: document.getElementById('rotate-value'),
+                scale: document.getElementById('scale-value'),
+                skewX: document.getElementById('skewX-value'),
+            }
+        };
+
+        const outerBox = document.getElementById('outer-box');
+        const innerBox = document.getElementById('inner-box');
+        const cssOutput = document.querySelector('#css-output code');
+        const resetButton = document.getElementById('reset-btn');
+
+        const defaults = {
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
+            transform: {
+                rotate: 0,
+                scale: 1,
+                skewX: 0
+            },
+            layout: {
+                float: 'none'
+            },
+            animation: 'none'
+        };
+
+        function updateStyles() {
+            // Padding
+            const pt = controls.padding.top.value;
+            const pr = controls.padding.right.value;
+            const pb = controls.padding.bottom.value;
+            const pl = controls.padding.left.value;
+            outerBox.style.padding = `${pt}px ${pr}px ${pb}px ${pl}px`;
+            values.padding.top.textContent = pt;
+            values.padding.right.textContent = pr;
+            values.padding.bottom.textContent = pb;
+            values.padding.left.textContent = pl;
+
+            // Transform
+            const rot = controls.transform.rotate.value;
+            const sc = controls.transform.scale.value;
+            const skX = controls.transform.skewX.value;
+            innerBox.style.transform = `rotate(${rot}deg) scale(${sc}) skewX(${skX}deg)`;
+            values.transform.rotate.textContent = rot;
+            values.transform.scale.textContent = sc;
+            values.transform.skewX.textContent = skX;
+
+            // Layout
+            const floatValue = document.querySelector('input[name="float"]:checked').value;
+            outerBox.style.float = floatValue;
+
+            // Animation
+            const animationValue = controls.animation.value;
+            innerBox.classList.remove('animate-pulse', 'animate-spin');
+            if (animationValue === 'pulse') {
+                innerBox.classList.add('animate-pulse');
+            } else if (animationValue === 'spin') {
+                innerBox.classList.add('animate-spin');
+            }
+
+            // Update CSS Output
+            let cssText = `.outer-box {\n  padding: ${pt}px ${pr}px ${pb}px ${pl}px;\n  float: ${floatValue};\n}\n\n`;
+            cssText += `.inner-box {\n  transform: rotate(${rot}deg) scale(${sc}) skewX(${skX}deg);\n`;
+            if (animationValue !== 'none') {
+                const animName = animationValue === 'pulse' ? 'pulse 2s infinite' : 'continuous-spin 4s linear infinite';
+                cssText += `  animation: ${animName};\n`;
+            }
+            cssText += `}`;
+            cssOutput.textContent = cssText;
+        }
+
+        // Add event listeners
+        for (const key in controls.padding) {
+            controls.padding[key].addEventListener('input', updateStyles);
+        }
+        for (const key in controls.transform) {
+            controls.transform[key].addEventListener('input', updateStyles);
+        }
+        controls.layout.float.forEach(radio => radio.addEventListener('change', updateStyles));
+        controls.animation.addEventListener('change', updateStyles);
+
+        // Reset functionality
+        resetButton.addEventListener('click', () => {
+            // Reset padding
+            for (const key in controls.padding) {
+                controls.padding[key].value = defaults.padding[key];
+            }
+            // Reset transform
+            for (const key in controls.transform) {
+                controls.transform[key].value = defaults.transform[key];
+            }
+            // Reset layout
+            document.querySelector('input[name="float"][value="none"]').checked = true;
+            // Reset animation
+            controls.animation.value = defaults.animation;
+
+            updateStyles();
+        });
+
+        // Initial update on page load
+        updateStyles();
+    </script>
+</body>
+
+</html>

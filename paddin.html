@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Padding Visualizer</title>
+    <style>
+         :root {
+            --bg-color: #f0f2f5;
+            --container-bg: #ffffff;
+            --box-bg: linear-gradient(45deg, #007BFF, #00C6FF);
+            --text-color: #333;
+            --light-text-color: #fff;
+            --border-color: #ddd;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .visualizer-app {
+            display: flex;
+            gap: 3rem;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 900px;
+            flex-wrap: wrap;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .controls-panel h1 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        #css-output {
+            background-color: #2d2d2d;
+            color: var(--light-text-color);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+        }
+        
+        #reset-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 6px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #reset-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .display-panel {
+            flex: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+        
+        .outer-box {
+            background-color: var(--container-bg);
+            border: 2px dashed var(--border-color);
+            transition: padding 0.3s ease;
+        }
+        
+        .inner-box {
+            width: 150px;
+            height: 150px;
+            background: var(--box-bg);
+            border: 2px solid #0056b3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light-text-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="visualizer-app">
+        <div class="controls-panel">
+            <h1>Padding Visualizer</h1>
+            <div class="control-group">
+                <label for="padding-top">padding-top: <span id="pt-value">20</span>px</label>
+                <input type="range" id="padding-top" min="0" max="100" value="20">
+            </div>
+            <div class="control-group">
+                <label for="padding-right">padding-right: <span id="pr-value">20</span>px</label>
+                <input type="range" id="padding-right" min="0" max="100" value="20">
+            </div>
+            <div class="control-group">
+                <label for="padding-bottom">padding-bottom: <span id="pb-value">20</span>px</label>
+                <input type="range" id="padding-bottom" min="0" max="100" value="20">
+            </div>
+            <div class="control-group">
+                <label for="padding-left">padding-left: <span id="pl-value">20</span>px</label>
+                <input type="range" id="padding-left" min="0" max="100" value="20">
+            </div>
+            <pre id="css-output"><code>padding: 20px 20px 20px 20px;</code></pre>
+            <button id="reset-btn">Reset</button>
+        </div>
+        <div class="display-panel">
+            <div class="outer-box" id="outer-box">
+                <div class="inner-box">Hello Padding</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sliders = {
+            top: document.getElementById('padding-top'),
+            right: document.getElementById('padding-right'),
+            bottom: document.getElementById('padding-bottom'),
+            left: document.getElementById('padding-left')
+        };
+
+        const values = {
+            top: document.getElementById('pt-value'),
+            right: document.getElementById('pr-value'),
+            bottom: document.getElementById('pb-value'),
+            left: document.getElementById('pl-value')
+        };
+
+        const outerBox = document.getElementById('outer-box');
+        const cssOutput = document.querySelector('#css-output code');
+        const resetButton = document.getElementById('reset-btn');
+
+        function updatePadding() {
+            const pt = sliders.top.value;
+            const pr = sliders.right.value;
+            const pb = sliders.bottom.value;
+            const pl = sliders.left.value;
+
+            // Update the padding of the outer box
+            outerBox.style.padding = `${pt}px ${pr}px ${pb}px ${pl}px`;
+
+            // Update the label values
+            values.top.textContent = pt;
+            values.right.textContent = pr;
+            values.bottom.textContent = pb;
+            values.left.textContent = pl;
+
+            // Update the CSS code output
+            cssOutput.textContent = `padding: ${pt}px ${pr}px ${pb}px ${pl}px;`;
+        }
+
+        // Add event listeners to all sliders
+        for (const key in sliders) {
+            sliders[key].addEventListener('input', updatePadding);
+        }
+
+        // Reset functionality
+        resetButton.addEventListener('click', () => {
+            for (const key in sliders) {
+                sliders[key].value = 0;
+            }
+            updatePadding();
+        });
+
+        // Initial update on page load
+        updatePadding();
+    </script>
+</body>
+
+</html>

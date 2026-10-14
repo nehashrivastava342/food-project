@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            height: 100px;
+            width: 100px;
+            background-color: red;
+            animation-name: myanimation;
+            animation-duration: 20s;
+            position: relative;
+        }
+        
+        @keyframes myanimation {
+            0% {
+                background-color: red;
+            }
+            25% {
+                background-color: rgb(225, 255, 0)
+            }
+            50% {
+                background-color: rgb(0, 255, 255);
+            }
+            75% {
+                background-color: rgb(255, 166, 0);
+            }
+            100% {
+                background-color: rgb(255, 0, 242);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div> hello animation</div>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CSS Display</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            min-height: 100vh;
+            margin: 0;
+        }
+        /* Base styles for all direct children divs in body */
+        
+        body>div {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        body>div:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22) !important;
+        }
+        
+        .html {
+            background-color: rgb(212, 133, 14);
+            height: 200px;
+            width: 200px;
+            border: 4px solid rgb(22, 16, 16);
+            border-radius: 40px;
+            box-shadow: 0 8px 15px rgba(44, 44, 43, 0.4);
+            font-size: 20px;
+        }
+        
+        .css {
+            background-color: rgb(204, 34, 34);
+            height: 200px;
+            width: 200px;
+            border: 4px solid rgb(17, 17, 17);
+            border-radius: 20px;
+            /* Added for consistency */
+        }
+        
+        .Hello {
+            background-color: rgb(121, 107, 189);
+            height: 200px;
+            width: 200px;
+            border: 4px solid rgb(0, 0, 0);
+            border-radius: 20px;
+            /* Added for consistency */
+        }
+        
+        .hi,
+        .photo {
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            /* Make container circular */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            /* Clip the image to the circle */
+        }
+        
+        .hi img,
+        .photo img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            /* Make image fill the circle */
+            border: none;
+            /* Remove individual borders */
+            border-radius: 0;
+            /* Reset border-radius on image */
+            box-shadow: none;
+            /* Remove individual shadows */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="html">hello html</div>
+    <div class="css">hello css</div>
+    <div class="Hello">Hello</div>
+    <div class="hi">
+        <img src="princess peach.jpeg" alt="Princess Peach">
+
+
+
+    </div>
+    <div class=" photo ">
+        <img src="image copy 7.png " alt="Character portrait ">
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Travelogue</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+         :root {
+            --primary-color-light: #2c3e50;
+            --secondary-color-light: #3498db;
+            --background-color-light: #ecf0f1;
+            --text-color-light: #34495e;
+            --card-bg-color-light: #ffffff;
+            --primary-color-dark: #ecf0f1;
+            --secondary-color-dark: #3498db;
+            --background-color-dark: #2c3e50;
+            --text-color-dark: #bdc3c7;
+            --card-bg-color-dark: #34495e;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        
+        body.light-mode {
+            --primary-color: var(--primary-color-light);
+            --secondary-color: var(--secondary-color-light);
+            --background-color: var(--background-color-light);
+            --text-color: var(--text-color-light);
+            --card-bg-color: var(--card-bg-color-light);
+            --light-text-color: #ecf0f1;
+            background: linear-gradient(45deg, #e0c3fc, #8ec5fc);
+        }
+        
+        body.dark-mode {
+            --primary-color: var(--primary-color-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --background-color: var(--background-color-dark);
+            --text-color: var(--text-color-dark);
+            --card-bg-color: var(--card-bg-color-dark);
+            --light-text-color: #2c3e50;
+            background: linear-gradient(-45deg, #0b1218, #1f2c3a, #2e4257, #3498db);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 992px) {
+            .container {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+        
+        .sidebar,
+        .main-content {
+            background-color: var(--card-bg-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+            transition: background-color 0.5s;
+            color: var(--text-color);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .theme-switcher {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .location-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, border-left-color 0.3s;
+            border-left: 5px solid transparent;
+        }
+        
+        .location-item i {
+            color: var(--secondary-color);
+            transition: color 0.3s;
+        }
+        
+        .location-item:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .location-item.active {
+            background-color: var(--secondary-color);
+            color: var(--light-text-color);
+            border-left: 5px solid var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .location-item.active i {
+            color: var(--light-text-color);
+        }
+        
+        .video-player {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background-color: #000;
+        }
+        
+        .video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s;
+        }
+        
+        .video-player iframe.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .video-info h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        #placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(45deg, var(--primary-color-light), var(--secondary-color-light));
+            transition: opacity 0.5s;
+        }
+        
+        #placeholder h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Destinations</h2>
+                <div class="theme-switcher" id="themeSwitcher">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+            <ul class="location-list" id="locationList">
+                <li class="location-item" data-video-id="anini"><i class="fa-solid fa-mountain-sun"></i> Anini, Arunachal Pradesh</li>
+                <li class="location-item" data-video-id="darjeeling"><i class="fa-solid fa-train-tram"></i> Darjeeling, West Bengal</li>
+                <li class="location-item" data-video-id="meghalaya"><i class="fa-solid fa-cloud-rain"></i> Meghalaya</li>
+                <li class="location-item" data-video-id="kerala"><i class="fa-solid fa-water"></i> Kerala</li>
+            </ul>
+        </aside>
+        <main class="main-content">
+            <div class="video-player" id="videoPlayer">
+                <div id="placeholder">
+                    <h3>Welcome to the Interactive Travelogue</h3>
+                    <p>Select a destination to start your journey!</p>
+                </div>
+                <iframe id="anini-video" src="https://www.youtube.com/embed/-AACQ23_IX8?si=ZGuryx3-GNMsq2u0&enablejsapi=1" title="Anini Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <iframe id="darjeeling-video" src="https://www.youtube.com/embed/XYwP-QndGG0?si=zJKM6z9MHv7OBG9k&enablejsapi=1" title="Darjeeling Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <iframe id="meghalaya-video" src="https://www.youtube.com/embed/j_90MI3t5sA?si=2_v_Y-b-yL4Y3Z_t&enablejsapi=1" title="Meghalaya Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <iframe id="kerala-video" src="https://www.youtube.com/embed/R83_o_i0i4s?si=Gk-p3g_x-y_Z_z_Y&enablejsapi=1" title="Kerala Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="video-info" id="videoInfo">
+                <h3 id="videoTitle"></h3>
+                <p id="videoDescription"></p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const locations = {
+            anini: {
+                title: "Anini, Arunachal Pradesh",
+                description: "Explore the breathtaking landscapes and serene villages of Arunachal Pradesh.",
+                videoId: "anini-video"
+            },
+            darjeeling: {
+                title: "Darjeeling, West Bengal",
+                description: "Discover the charm of Darjeeling, home to India's highest top train and picturesque tea gardens.",
+                videoId: "darjeeling-video"
+            },
+            meghalaya: {
+                title: "Meghalaya, The Abode of Clouds",
+                description: "Witness the stunning living root bridges and majestic waterfalls of Meghalaya.",
+                videoId: "meghalaya-video"
+            },
+            kerala: {
+                title: "Kerala, God's Own Country",
+                description: "Experience the tranquil backwaters and lush greenery of Kerala.",
+                videoId: "kerala-video"
+            }
+        };
+
+        const locationList = document.getElementById('locationList');
+        const placeholder = document.getElementById('placeholder');
+        const videoTitle = document.getElementById('videoTitle');
+        const videoDescription = document.getElementById('videoDescription');
+        const themeSwitcher = document.getElementById('themeSwitcher');
+        const themeIcon = themeSwitcher.querySelector('i');
+        const body = document.body;
+
+        function stopAllVideos() {
+            document.querySelectorAll('.video-player iframe').forEach(iframe => {
+                iframe.classList.remove('active');
+                iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+            });
+        }
+
+        locationList.addEventListener('click', (e) => {
+            const locationItem = e.target.closest('.location-item');
+            if (locationItem) {
+                const locationId = locationItem.dataset.videoId;
+
+                document.querySelectorAll('.location-item').forEach(item => item.classList.remove('active'));
+                locationItem.classList.add('active');
+
+                placeholder.style.opacity = '0';
+                placeholder.style.visibility = 'hidden';
+
+                const location = locations[locationId];
+                stopAllVideos();
+
+                const activeVideo = document.getElementById(location.videoId);
+                activeVideo.classList.add('active');
+
+                videoTitle.textContent = location.title;
+                videoDescription.textContent = location.description;
+            }
+        });
+
+        function setTeam(theme) {
+            body.className = theme;
+            themeIcon.className = theme === 'dark-mode' ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('travelogue-theme', theme);
+        }
+
+        themeSwitcher.addEventListener('click', () => {
+            const currentTheme = body.classList.contains('dark-mode') ? 'light-mode' : 'dark-mode';
+            setTeam(currentTheme);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('travelogue-theme') || 'light-mode';
+            setTeam(savedTheme);
+        });
+    </script>
+</body>
+
+</html>
